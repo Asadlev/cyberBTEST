@@ -1,0 +1,27 @@
+version: '3'
+services:
+  db:
+    image: postgres:13  # Указываем образ PostgreSQL
+    environment:
+      POSTGRES_DB: price_monitoring  # Название базы данных
+      POSTGRES_USER: user            # Имя пользователя
+      POSTGRES_PASSWORD: password    # Пароль для пользователя
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Объем для хранения данных
+    ports:
+      - "5432:5432"  # Проброс порта для подключения к БД с хоста
+
+  app:
+    build: .
+    depends_on:
+      - db
+    volumes:
+      - ./app:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgres://user:password@db/price_monitoring  # Строка подключения к базе данных
+
+# Определение volumes
+volumes:
+  postgres_data:  # Здесь мы создаём volume для PostgreSQL
